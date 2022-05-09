@@ -1,0 +1,13 @@
+footer {
+    img {
+        clip-path: polygon(0 20%, 100% 20%, 100% 100%, 0 100%);
+        margin-top: -50px;
+        border-radius: 10px;
+    }
+    li {
+        list-style-type: none;
+    }
+    button {
+        font-family: "Bebas Neue", cursive;
+    }
+}

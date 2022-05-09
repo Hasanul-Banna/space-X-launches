@@ -1,0 +1,13 @@
+@import "./assets/styles/variables";
+@import "~bootstrap/scss/bootstrap";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  font-family: "Roboto", sans-serif;
+}
+.fill-white {
+  fill: white;
+}
