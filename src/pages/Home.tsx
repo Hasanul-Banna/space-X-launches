@@ -1,26 +1,19 @@
-import axios from "axios";
 import React, { FC, useEffect, useState } from "react";
-import { Col, Form, Row } from "react-bootstrap";
+import { Col, Form, Row, Spinner } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
 import "../assets/styles/_home.scss";
 
 const Home: FC = () => {
   const [AllData, setAllData] = useState([]);
   const [FilteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+
+  const { flightData, isLoading } = useSelector((store: any) => store.flight);
 
   useEffect(() => {
-    axios
-      .get("https://api.spacexdata.com/v3/launches")
-      .then((response) => {
-        setAllData(response.data);
-        setFilteredData(response.data);
-        console.log(response.data.reverse());
-      })
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+    // console.log(flightData);
+    setFilteredData(flightData);
+  }, [flightData]);
   return (
     <div>
       <section className="banner text-center  d-flex flex-column justify-content-center align-items-center ">
@@ -73,36 +66,40 @@ const Home: FC = () => {
       </section>
       <section className="container">
         <Row>
-          {FilteredData.length
-            ? FilteredData.map((flight: any, index) => (
-                <Col key={index} lg="3" md="4" sm="6">
-                  <div className="p-1">
-                    <div
-                      className="border drop-shadow text-center"
+          {!isLoading ? (
+            FilteredData.map((flight: any, index) => (
+              <Col key={index} lg="3" md="4" sm="6">
+                <div className="p-1">
+                  <div
+                    className="border drop-shadow text-center"
+                    style={{ height: "150px" }}
+                  >
+                    <img
+                      src={
+                        flight.links.flickr_images.length
+                          ? flight.links.flickr_images[0]
+                          : flight.links.mission_patch
+                      }
+                      alt="Image Not Found!"
+                      className="img-fluid"
                       style={{ height: "150px" }}
-                    >
-                      <img
-                        src={
-                          flight.links.flickr_images.length
-                            ? flight.links.flickr_images[0]
-                            : flight.links.mission_patch
-                        }
-                        alt="Image Not Found!"
-                        className="img-fluid"
-                        style={{ height: "150px" }}
-                      />
-                    </div>
-                    <p>{flight.mission_name}</p>
-                    <p>{flight.rocket.rocket_name}</p>
-                    <p>
-                      {String(new Date(flight.launch_date_local)).slice(4, 15)}
-                    </p>
-                    <p>{flight.launch_success ? "Success" : "Failed"}</p>
-                    <p>{flight.upcoming ? "Upcoming" : "Not Upcoming"}</p>
+                    />
                   </div>
-                </Col>
-              ))
-            : ""}
+                  <p>{flight.mission_name}</p>
+                  <p>{flight.rocket.rocket_name}</p>
+                  <p>
+                    {String(new Date(flight.launch_date_local)).slice(4, 15)}
+                  </p>
+                  <p>{flight.launch_success ? "Success" : "Failed"}</p>
+                  <p>{flight.upcoming ? "Upcoming" : "Not Upcoming"}</p>
+                </div>
+              </Col>
+            ))
+          ) : (
+            <div className="text-center w-100 p-5">
+              <Spinner animation="grow" variant="primary" />
+            </div>
+          )}
         </Row>
       </section>
     </div>

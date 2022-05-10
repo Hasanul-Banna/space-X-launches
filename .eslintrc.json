@@ -15,6 +15,7 @@
     }
   },
   "rules": {
+    "object-curly-newline": "off",
     "quotes": "off",
     "no-console": 0,
     "no-unused-vars": "warn",
@@ -33,6 +34,7 @@
         "endOfLine": "auto"
       }
     ],
+    "comma-dangle": ["error", "never"],
     "import/extensions": [
       "error",
       "ignorePackages",
