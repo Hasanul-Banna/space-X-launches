@@ -1,16 +1,19 @@
 /* eslint-disable */
 import React, { FC, useEffect, useState } from "react";
-import { Badge, Button, Col, Form, Row, Spinner } from "react-bootstrap";
+import { Badge, Col, Row, Spinner } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import "../assets/styles/_home.scss";
+import FilterBar from "../components/FilterBar";
 
 const Home: FC = () => {
-  const [SearchValues, setSearchValues] = useState({
-    name: "",
-    status: "0",
-    isUpcoming: null,
-    dateRange: "0",
-  });
+  const { flightData, isLoading } = useSelector((store: any) => store.flight);
+
+  const [FilteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+    setFilteredData(flightData);
+  }, [flightData]);
+
   const getDateDifference = (date) => {
     const date1: any = new Date();
     const date2: any = new Date(date);
@@ -19,128 +22,55 @@ const Home: FC = () => {
     console.log(diffDays + " days");
     return diffDays;
   };
-  const { flightData, isLoading } = useSelector((store: any) => store.flight);
-  useEffect(() => {
+
+  const resetData = () => {
     setFilteredData(flightData);
-  }, [flightData]);
-  const [FilteredData, setFilteredData] = useState([]);
-  const [AllData, setAllData] = useState([]);
-  const handleChange = (name: string, value: string | boolean) => {
-    setSearchValues({ ...SearchValues, [name]: value });
   };
-  useEffect(() => {
-    // console.log(SearchValues);
-    let AllData = [...flightData];
-    let updatedData = [];
-    if (SearchValues.isUpcoming !== null) {
-      console.log("isUpcoming");
-      updatedData = AllData.filter(
-        (item) => item.upcoming === SearchValues.isUpcoming
-      );
+
+  const handleFiltering = (value) => {
+    const { rocketName, status, upcoming, dateRange } = value;
+    const data = flightData.filter((flight) => {
+      if (
+        handleRocketNameSearch(rocketName, flight) &&
+        handleStatus(status, flight) &&
+        handleUpcoming(upcoming, flight) &&
+        handleDateRange(dateRange, flight)
+      ) {
+        return flight;
+      }
+    });
+
+    setFilteredData(data);
+  };
+
+  const handleRocketNameSearch = (name: string, item) => {
+    return item.rocket.rocket_name.toLowerCase().includes(name.toLowerCase());
+  };
+
+  const handleDateRange = (dateRange: string, item) => {
+    return getDateDifference(item.launch_date_local) <= Number(dateRange);
+  };
+
+  const handleStatus = (status: number, item) => {
+    if (status == 1) {
+      return item.launch_success;
+    } else if (status == 2) {
+      return !item.launch_success;
+    } else {
+      return item;
     }
-    if (!!SearchValues.name.length) {
-      console.log("rocket");
-      updatedData = AllData.filter((item) => {
-        return item.rocket.rocket_name
-          .toLowerCase()
-          .includes(SearchValues.name.toLowerCase());
-      });
-    }
-    if (SearchValues.status !== "0") {
-      console.log("launch_success");
-      updatedData = AllData.filter(
-        (item) => item.launch_success === (Number(SearchValues.status) === 1)
-      );
-    }
-    if (SearchValues.dateRange !== "0") {
-      console.log("dateRange");
-      updatedData = AllData.filter(
-        (item) =>
-          getDateDifference(item.launch_date_local) <=
-          Number(SearchValues.dateRange)
-      );
-    }
-    setFilteredData(updatedData);
-    console.log(updatedData.length);
-  }, [SearchValues]);
+  };
+
+  const handleUpcoming = (upcoming: boolean, item) => {
+    return item.upcoming === upcoming;
+  };
+
   return (
     <div>
       <section className="banner text-center  d-flex flex-column justify-content-center align-items-center ">
         <h2 className="display-3 text-white">L a u n c h e s</h2>
       </section>
-      {/* banner section ends */}
-      <section className="container">
-        <Row
-          className="border p-3 rounded bg-white"
-          style={{ marginTop: "-70px" }}
-        >
-          <Col md="4">
-            <Form.Control
-              autoFocus
-              type="text"
-              value={SearchValues.name}
-              onChange={(e) => {
-                handleChange("name", e.target.value);
-                // handleFilter(e, AllData);
-              }}
-              placeholder="Search By Rocket Name"
-              className="rounded"
-            />
-          </Col>
-          <Col md="2">
-            {/* <Form.Label>Email address</Form.Label> */}
-            <Form.Select
-              aria-label="Default select example"
-              onChange={(e) => {
-                handleChange("dateRange", e.target.value);
-                // console.log(e.target.value);
-              }}
-            >
-              <option value={"0"}>Date Range (All)</option>
-              <option value="7">Last Week</option>
-              <option value="30">Last Month</option>
-              <option value="365">Last Year</option>
-            </Form.Select>
-          </Col>
-          <Col md="2">
-            {/* <Form.Label>Email address</Form.Label> */}
-            <Form.Select
-              aria-label="Default select example"
-              onChange={(e) => {
-                handleChange("status", e.target.value);
-                // console.log(e.target.value);
-              }}
-            >
-              <option value={0}>Status (All)</option>
-              <option value={1}>Success</option>
-              <option value={2}>Failure</option>
-            </Form.Select>
-          </Col>
-          <Col md="2" className="pt-2">
-            {/* <Form.Label>Email address</Form.Label> */}
-            <Form.Check
-              type={"checkbox"}
-              id="checkbox123"
-              checked={SearchValues.isUpcoming}
-              onChange={(e) => {
-                handleChange("isUpcoming", e.target.checked);
-                // handleUpcomingFilter(e.target.checked);
-              }}
-              label="Is Upcoming?"
-            />
-          </Col>
-          <Col md="2" className="pt-1 text-center">
-            <Button
-              variant="primary"
-              size="sm"
-              className="px-3"
-              onClick={() => setFilteredData(flightData)}
-            >
-              clear all filters
-            </Button>
-          </Col>
-        </Row>
-      </section>
+      <FilterBar resetData={resetData} handleFiltering={handleFiltering} />
       <div style={{ background: "black", minHeight: "30vh", color: "white" }}>
         <section className="container">
           <Row>

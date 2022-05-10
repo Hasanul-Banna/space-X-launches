@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import flightSlice from './slices/flightSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import flightSlice from "./slices/flightSlice";
 
 const store = configureStore({
-    reducer: {
-        flight: flightSlice,
-    },
+  reducer: {
+    flight: flightSlice,
+  },
 });
 export default store;
