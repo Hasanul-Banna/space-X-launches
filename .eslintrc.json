@@ -34,7 +34,7 @@
         "endOfLine": "auto"
       }
     ],
-    "comma-dangle": ["error", "never"],
+    "comma-dangle": "off",
     "import/extensions": [
       "error",
       "ignorePackages",

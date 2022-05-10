@@ -13,7 +13,7 @@ const FilterForm = (props) => {
             handleChange("name", e.target.value);
             // handleFilter(e, AllData);
           }}
-          placeholder="Search By Rocket Name"
+          placeholder="Search By Mission/Rocket Name"
           className="rounded"
         />
       </Col>

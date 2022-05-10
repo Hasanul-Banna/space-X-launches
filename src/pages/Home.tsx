@@ -29,39 +29,44 @@ const Home: FC = () => {
   }, [flightData]);
 
   useEffect(() => {
-    // console.log(SearchValues);
+    console.log(SearchValues);
     let AllData = [...flightData];
     let updatedData = [];
-    if (SearchValues.isUpcoming !== null) {
-      console.log("isUpcoming");
-      updatedData = AllData.filter(
-        (item) => item.upcoming === SearchValues.isUpcoming
-      );
-    }
-    if (!!SearchValues.name.length) {
+    // if (SearchValues.isUpcoming !== null) {
+    //   console.log("isUpcoming");
+    //   updatedData = AllData.filter(
+    //     (item) => item.upcoming === SearchValues.isUpcoming
+    //   );
+    // }
+    if (!!SearchValues.name.length && SearchValues.isUpcoming === null && SearchValues.status === "0" && SearchValues.dateRange === "0") {
       console.log("rocket");
       updatedData = AllData.filter((item) => {
-        return item.rocket.rocket_name
-          .toLowerCase()
-          .includes(SearchValues.name.toLowerCase());
+        return (
+          item.rocket.rocket_name
+            .toLowerCase()
+            .includes(SearchValues.name.toLowerCase()) ||
+          item.mission_name
+            .toLowerCase()
+            .includes(SearchValues.name.toLowerCase())
+        );
       });
     }
-    if (SearchValues.status !== "0") {
-      console.log("launch_success");
-      updatedData = AllData.filter(
-        (item) => item.launch_success === (Number(SearchValues.status) === 1)
-      );
-    }
-    if (SearchValues.dateRange !== "0") {
-      console.log("dateRange");
-      updatedData = AllData.filter(
-        (item) =>
-          getDateDifference(item.launch_date_local) <=
-          Number(SearchValues.dateRange)
-      );
-    }
+    // if (SearchValues.status !== "0") {
+    //   console.log("launch_success");
+    //   updatedData = AllData.filter(
+    //     (item) => item.launch_success === (Number(SearchValues.status) === 1)
+    //   );
+    // }
+    // if (SearchValues.dateRange !== "0") {
+    //   console.log("dateRange");
+    //   updatedData = AllData.filter(
+    //     (item) =>
+    //       getDateDifference(item.launch_date_local) <=
+    //       Number(SearchValues.dateRange)
+    //   );
+    // }
     setFilteredData(updatedData);
-    console.log(updatedData.length);
+    // console.log(updatedData.length);
   }, [SearchValues]);
 
   const handleChange = (name: string, value: string | boolean) => {
