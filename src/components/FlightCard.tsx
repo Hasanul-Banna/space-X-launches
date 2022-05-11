@@ -39,9 +39,13 @@ const FlightCard = (props) => {
               Successful
             </Badge>
           ) : (
-            <Badge pill bg="danger" className="mx-3 px-2">
-              Failed
-            </Badge>
+            <>
+              {!flight.upcoming && (
+                <Badge pill bg="danger" className="mx-3 px-2">
+                  Failed
+                </Badge>
+              )}
+            </>
           )}
         </p>
         <div className="w-100">
