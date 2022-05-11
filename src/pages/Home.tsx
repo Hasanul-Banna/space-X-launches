@@ -30,8 +30,6 @@ const Home: FC = () => {
 
   useEffect(() => {
     console.log(SearchValues);
-    // let AllData = [...flightData];
-    // let updatedData = [];
 
     const updatedData = SearchValues.name.length
       ? flightData.filter((item) => {
@@ -68,22 +66,6 @@ const Home: FC = () => {
               Number(SearchValues.dateRange)
           )
         : [...updatedData3];
-    // if (!!SearchValues.name.length) {
-    // console.log("rocket");
-    // }
-    // if (SearchValues.status === "1" || SearchValues.status === "2") {
-    //   console.log("launch_success");
-    // }
-    // if (SearchValues.isUpcoming === true || SearchValues.isUpcoming === false) {
-    //   console.log("isUpcoming");
-    // }
-    // if (
-    //   SearchValues.dateRange === "7" ||
-    //   SearchValues.dateRange === "30" ||
-    //   SearchValues.dateRange === "365"
-    // ) {
-    //   console.log("dateRange");
-    // }
     setFilteredData(updatedData4);
     // console.log(updatedData.length);
   }, [SearchValues]);
