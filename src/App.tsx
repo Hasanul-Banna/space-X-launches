@@ -1,6 +1,6 @@
 /* eslint-disable */
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
   BrowserRouter as Router,
@@ -12,6 +12,7 @@ import "./App.scss";
 import Layout from "./Layout";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
+import PreLoader from "./PreLoader";
 import { setIsLoading, setLaunches } from "./store/slices/flightSlice";
 
 function App() {
@@ -29,24 +30,39 @@ function App() {
         dispatch(setIsLoading(false));
       });
   }, []);
+  const [perLoader, setLoader] = useState(true);
+  useEffect(() => {
+    const handleLoading = () => {
+      console.log("loaded");
+      setTimeout(() => {
+        setLoader(false);
+      }, 3000);
+    };
+    window.addEventListener("load", handleLoading);
+    return () => window.removeEventListener("load", handleLoading);
+  }, []);
   return (
-    <Router>
-      <Layout>
-        <Switch>
-          <Route path="/" exact>
-            <Redirect to="/Home" />
-          </Route>
-          <Route path="/Home" exact>
-            {/* <Suspense fallback={<Spinner animation="grow" variant="primary" />}> */}
-            <Home />
-            {/* </Suspense> */}
-          </Route>
-          <Route path="*">
-            <NotFound />
-          </Route>
-        </Switch>
-      </Layout>
-    </Router>
+    <Fragment>
+      {perLoader ? (
+        <PreLoader />
+      ) : (
+        <Router>
+          <Layout>
+            <Switch>
+              <Route path="/" exact>
+                <Redirect to="/Home" />
+              </Route>
+              <Route path="/Home" exact>
+                <Home />
+              </Route>
+              <Route path="*">
+                <NotFound />
+              </Route>
+            </Switch>
+          </Layout>
+        </Router>
+      )}
+    </Fragment>
   );
 }
 
