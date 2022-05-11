@@ -30,52 +30,61 @@ const Home: FC = () => {
 
   useEffect(() => {
     console.log(SearchValues);
-    let AllData = [...flightData];
-    let updatedData = [];
-    if (
-      !!SearchValues.name.length &&
-      SearchValues.isUpcoming === null &&
-      SearchValues.status === "0" &&
-      SearchValues.dateRange === "0"
-    ) {
-      console.log("rocket");
-      updatedData = AllData.filter((item) => {
-        return (
-          item.rocket.rocket_name
-            .toLowerCase()
-            .includes(SearchValues.name.toLowerCase()) ||
-          item.mission_name
-            .toLowerCase()
-            .includes(SearchValues.name.toLowerCase())
-        );
-      });
-    }
+    // let AllData = [...flightData];
+    // let updatedData = [];
 
-    if (SearchValues.status === "1" || SearchValues.status === "2") {
-      console.log("launch_success");
-      updatedData = AllData.filter(
-        (item) => item.launch_success === (Number(SearchValues.status) === 1)
-      );
-    }
-    if (SearchValues.isUpcoming === true || SearchValues.isUpcoming === false) {
-      console.log("isUpcoming");
-      updatedData = AllData.filter(
-        (item) => item.upcoming === SearchValues.isUpcoming
-      );
-    }
-    if (
+    const updatedData = SearchValues.name.length
+      ? flightData.filter((item) => {
+          const Matched =
+            item.rocket.rocket_name
+              .toLowerCase()
+              .includes(SearchValues.name.toLowerCase())
+            // || item.mission_name
+            //   .toLowerCase()
+            //   .includes(SearchValues.name.toLowerCase());
+          return Matched;
+        })
+      : [...flightData];
+    const updatedData2 =
+      SearchValues.status === "1" || SearchValues.status === "2"
+        ? updatedData.filter(
+            (item) =>
+              item.launch_success === (Number(SearchValues.status) === 1)
+          )
+        : [...updatedData];
+    const updatedData3 =
+      SearchValues.isUpcoming === true || SearchValues.isUpcoming === false
+        ? updatedData2.filter(
+            (item) => item.upcoming === SearchValues.isUpcoming
+          )
+        : [...updatedData2];
+    const updatedData4 =
       SearchValues.dateRange === "7" ||
       SearchValues.dateRange === "30" ||
       SearchValues.dateRange === "365"
-    ) {
-      console.log("dateRange");
-      updatedData = AllData.filter(
-        (item) =>
-          getDateDifference(item.launch_date_local) <=
-          Number(SearchValues.dateRange)
-      );
-    }
-    setFilteredData(updatedData);
+        ? updatedData3.filter(
+            (item) =>
+              getDateDifference(item.launch_date_local) <=
+              Number(SearchValues.dateRange)
+          )
+        : [...updatedData3];
+    // if (!!SearchValues.name.length) {
+    // console.log("rocket");
+    // }
+    // if (SearchValues.status === "1" || SearchValues.status === "2") {
+    //   console.log("launch_success");
+    // }
+    // if (SearchValues.isUpcoming === true || SearchValues.isUpcoming === false) {
+    //   console.log("isUpcoming");
+    // }
+    // if (
+    //   SearchValues.dateRange === "7" ||
+    //   SearchValues.dateRange === "30" ||
+    //   SearchValues.dateRange === "365"
+    // ) {
+    //   console.log("dateRange");
+    // }
+    setFilteredData(updatedData4);
     // console.log(updatedData.length);
   }, [SearchValues]);
 
@@ -90,6 +99,7 @@ const Home: FC = () => {
       <Container>
         <FilterForm
           SearchValues={SearchValues}
+          setSearchValues={setSearchValues}
           handleChange={handleChange}
           setFilteredData={setFilteredData}
           flightData={flightData}

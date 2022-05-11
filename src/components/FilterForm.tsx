@@ -1,7 +1,29 @@
 import { Button, Col, Form, Row } from "react-bootstrap";
 
 const FilterForm = (props) => {
-  const { SearchValues, handleChange, setFilteredData, flightData } = props;
+  const {
+    SearchValues,
+    handleChange,
+    setFilteredData,
+    flightData,
+    setSearchValues,
+  } = props;
+
+  const handleClearFilter = () => {
+    setFilteredData(flightData);
+    setSearchValues({
+      name: "",
+      status: "0",
+      isUpcoming: null,
+      dateRange: "0",
+    });
+    const DropdownList = document.getElementById("Status") as HTMLSelectElement;
+    const DropdownList2 = document.getElementById(
+      "DateRange"
+    ) as HTMLSelectElement;
+    DropdownList.selectedIndex = 0;
+    DropdownList2.selectedIndex = 0;
+  };
   return (
     <Row className="border p-3 rounded bg-white" style={{ marginTop: "-80px" }}>
       <Col lg="4">
@@ -13,7 +35,7 @@ const FilterForm = (props) => {
             handleChange("name", e.target.value);
             // handleFilter(e, AllData);
           }}
-          placeholder="Search By Mission/Rocket Name"
+          placeholder="Search By Rocket Name"
           className="rounded"
         />
       </Col>
@@ -25,6 +47,7 @@ const FilterForm = (props) => {
             handleChange("dateRange", e.target.value);
             // console.log(e.target.value);
           }}
+          id={"DateRange"}
         >
           <option value={"0"}>Date Range (All)</option>
           <option value="7">Last Week</option>
@@ -40,6 +63,7 @@ const FilterForm = (props) => {
             handleChange("status", e.target.value);
             // console.log(e.target.value);
           }}
+          id={"Status"}
         >
           <option value={0}>Status (All)</option>
           <option value={1}>Success</option>
@@ -51,7 +75,7 @@ const FilterForm = (props) => {
         <Form.Check
           type={"checkbox"}
           id="checkbox123"
-          checked={SearchValues.isUpcoming}
+          checked={!!SearchValues.isUpcoming}
           onChange={(e) => {
             handleChange("isUpcoming", e.target.checked);
             // handleUpcomingFilter(e.target.checked);
@@ -64,7 +88,7 @@ const FilterForm = (props) => {
           variant="primary"
           size="sm"
           className="px-3"
-          onClick={() => setFilteredData(flightData)}
+          onClick={handleClearFilter}
         >
           clear all filters
         </Button>
